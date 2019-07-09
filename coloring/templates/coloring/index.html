@@ -59,7 +59,27 @@
 			// you may also add code outside of the function (e.g., global variables)
 			function myGradientInteraction(){
 				var tool = new paper.Tool();
+        
+        let path = new paper.Path();
 
+        // Add three points to the path
+        path.add(new paper.Point(120, 270));
+        path.add(new paper.Point(120, 120));
+        path.add(new paper.Point(420, 120));
+        path.add(new paper.Point(420, 270));
+        
+
+        // Close the path
+        path.closed = true;
+
+        // Give the path a color and fill color
+        path.strokeColor = 'black';
+        path.strokeWidth = 5;
+        path.fillColor = 'red';
+
+        // Draw the path now
+        paper.view.draw();
+        
 				tool.onMouseDown = function (event) {
 
 				}
