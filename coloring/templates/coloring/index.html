@@ -35,11 +35,125 @@
 		    margin-right: auto;
 		    display: block;
 		}
+    
+    
+    #palette_image {
+      width: 120px;
+      height: 120px;
+    }
+    
+    #undo {
+      width: 80px;
+      height: 80px;
+    }
+    
+    
 	</style>
 
 	<script type="text/javascript" canvas="canvas">
 		window.onload = function() {
 			var canvas = document.getElementById('myCanvas');
+      
+      
+      //LEONOR'S CODE
+      //creates circle for current color 
+      var c = document.getElementById("currentColor");
+      var ctx = c.getContext("2d");
+      ctx.beginPath();
+      ctx.arc(100, 75, 50, 0, 2 * Math.PI);
+      ctx.fillColor = "red";
+      ctx.fill();
+      
+      //updateSelectedColor("red");
+      
+      
+      
+      function updateSelectedColor(newColor){
+       
+        
+        
+        ctx.fillColor = newColor;
+        ctx.fill();
+        //ctx.strokeStyle = "black";
+        //ctx.stroke();
+      }
+      
+      /*function componentToHex(c) {
+        var hex = c.toString(16);
+        return hex.length == 1 ? "0" + hex : hex;
+      }
+
+      function rgbToHex(r, g, b) {
+         return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+      }*/
+      
+      
+      
+      //creates gradient box 
+      var gradient = document.getElementById('gradient_box');
+      var ctx = gradient.getContext("2d");
+      updateGradient("red");
+      
+     //This function updates the gradient box from white to newColor  
+      function updateGradient(newColor) {
+        var grd = ctx.createLinearGradient(0, 0, 170, 0);
+        grd.addColorStop(0, "white");
+        grd.addColorStop(1, newColor);
+        ctx.fillStyle = grd;
+      ctx.fillRect(20, 20, 150, 100);
+      }
+      
+    //following 4 functions from: https://ourcodeworld.com/articles/read/185/how-to-get-the-pixel-color-from-a-canvas-on-click-or-mouse-event-with-javascript   
+    function getElementPosition(obj) {
+      var curleft = 0, curtop = 0;
+      if (obj.offsetParent) {
+        do {
+            curleft += obj.offsetLeft;
+            curtop += obj.offsetTop;
+        } while (obj = obj.offsetParent);
+        return { x: curleft, y: curtop };
+      }
+      return undefined;
+    }
+      
+     function getEventLocation(element,event){
+      // Relies on the getElementPosition function.
+      var pos = getElementPosition(element);
+      return {
+    	  x: (event.pageX - pos.x),
+        y: (event.pageY - pos.y)
+      };
+    }
+      
+    gradient.addEventListener("click",function(event){
+      // Get the coordinates of the click
+      var eventLocation = getEventLocation(this,event);
+      // Get the data of the pixel according to the location generate by the getEventLocation function
+      var context = this.getContext('2d');
+      var pixelData = context.getImageData(eventLocation.x, eventLocation.y, 1, 1).data; 
+
+      // If transparency on the pixel , array = [0,0,0,0]
+      if((pixelData[0] == 0) && (pixelData[1] == 0) && (pixelData[2] == 0) && (pixelData[3] == 0)){
+        // Do something if the pixel is transparent
+      }
+
+      // Convert it to HEX if you want using the rgbToHex method.
+      var hex = "#" + ("000000" + rgbToHex(pixelData[0], pixelData[1], pixelData[2])).slice(-6);
+      cp.history.push(hex);
+      //updateSelectedColor(hex);
+      console.log(hex);
+      
+},false);
+      
+    function rgbToHex(r, g, b) {
+      if (r > 255 || g > 255 || b > 255)
+        throw "Invalid color component";
+      return ((r << 16) | (g << 8) | b).toString(16);
+    }
+      
+      
+      //END OF LEONORS CODE
+
 
 			// coloring page
 			var mandala = {
@@ -66,8 +180,7 @@
         path.add(new paper.Point(120, 270));
         path.add(new paper.Point(120, 120));
         path.add(new paper.Point(420, 120));
-        path.add(new paper.Point(420, 270));
-        
+        path.add(new paper.Point(420, 270)); 
 
         // Close the path
         path.closed = true;
@@ -84,23 +197,21 @@
         
 				tool.onMouseDown = function (event) {
           start = event.point;
-				}
-        
+				}  
 				tool.onMouseUp = function (event) {
          end = event.point;
          path.fillColor = {gradient: {stops: [cp.history[cp.history.length-1], 
                                               cp.history[cp.history.length-2]]}, 
                            origin: start, destination: end};
-				}
-        
-       
+				}  
       }
 
 			// your custom interaction goes here!
 			// you may replace everything
 			function myCustomInteraction() {
 				var tool = new paper.Tool();
-
+        
+        //color being used is selected
 				tool.onMouseDown = function (event) {
 				    var hit = mandala.item.hitTest(event.point, { tolerance: 10, fill: true });
 				    if (hit) {
@@ -108,7 +219,28 @@
 				    }
 				}
 			}
-
+      
+     //LEONOR'S CODE 
+     $container: $('#color-palette').hide(); 
+     var click = 0;
+     $container: $('#palette_image').click( function() {
+        click += 1;
+        console.log(click);
+       controlPalette(click);
+     });
+      
+     function controlPalette(n) {
+       if ((click % 2) == 0){
+         $container: $('#color-palette').hide();
+       }
+       else {
+          $container: $('#color-palette').show();
+       }
+     }
+      
+      //END OF LEONOR'S CODE
+      
+      
 
 			// create a color palette with the given colors
 			function createColorPalette(colors){
@@ -120,6 +252,8 @@
 					$swatch.click(function(){
 						// add color to the color palette history
 					  	cp.history.push($(this).css("background-color"));
+              updateGradient(cp.history[cp.history.length - 1]);
+              //updateSelectedColor(cp.history[cp.history.length - 1]);
 					});
 					cp.$container.append($swatch);
 				}
@@ -168,8 +302,28 @@
 	</script>
 </head>
 <body>	
+  <div id="topBar">
+     <!-- <img id="undo" src="'/static/coloring/images/palette.png'" alt="undo button"> -->
+     <canvas id="currentColor" width="400px" height="200px"></canvas>
+  </div>
+  
+  
+  
 
 	<canvas id="myCanvas" width="750px" height="750px"></canvas>
 	<div id="color-palette"></div>
+ 
+  
+  
+  
+  <!-- LEONOR'S CODE -->
+  <div id="bottomBox">
+    <img id="palette_image" src='/static/coloring/images/palette.png' alt="color palette">
+    <!-- PANPAN'S GRADIENT BOX-->
+    <canvas id="gradient_box" width="400px" height="200px"></canvas>
+    
+  </div>
+  <!-- END OF LEONOR'S CODE -->
+  
 </body>
 </html>
