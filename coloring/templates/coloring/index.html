@@ -58,49 +58,32 @@
       //LEONOR'S CODE
       //creates circle for current color 
       var c = document.getElementById("currentColor");
-      var ctx = c.getContext("2d");
-      ctx.beginPath();
-      ctx.arc(100, 75, 50, 0, 2 * Math.PI);
-      ctx.fillColor = "red";
-      ctx.fill();
+      updateSelectedColor("red");
       
-      //updateSelectedColor("red");
-      
-      
-      
+      //updates circle color on top bar 
       function updateSelectedColor(newColor){
-       
-        
-        
-        ctx.fillColor = newColor;
+        var ctx = c.getContext("2d");
+        ctx.beginPath();
+        ctx.arc(100, 75, 50, 0, 2 * Math.PI);
+        console.log(newColor);
+        ctx.fillStyle = newColor;
         ctx.fill();
-        //ctx.strokeStyle = "black";
-        //ctx.stroke();
-      }
-      
-      /*function componentToHex(c) {
-        var hex = c.toString(16);
-        return hex.length == 1 ? "0" + hex : hex;
-      }
-
-      function rgbToHex(r, g, b) {
-         return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
-      }*/
-      
-      
+        ctx.strokeStyle = "black";
+        ctx.stroke();
+      }      
       
       //creates gradient box 
       var gradient = document.getElementById('gradient_box');
       var ctx = gradient.getContext("2d");
-      updateGradient("red");
+      updateGradient("white", "red"); //
       
      //This function updates the gradient box from white to newColor  
-      function updateGradient(newColor) {
+      function updateGradient(newColor1, newColor2) {
         var grd = ctx.createLinearGradient(0, 0, 170, 0);
-        grd.addColorStop(0, "white");
-        grd.addColorStop(1, newColor);
+        grd.addColorStop(0, newColor1);
+        grd.addColorStop(1, newColor2);
         ctx.fillStyle = grd;
-      ctx.fillRect(20, 20, 150, 100);
+        ctx.fillRect(20, 20, 150, 100);
       }
       
     //following 4 functions from: https://ourcodeworld.com/articles/read/185/how-to-get-the-pixel-color-from-a-canvas-on-click-or-mouse-event-with-javascript   
@@ -140,8 +123,10 @@
       // Convert it to HEX if you want using the rgbToHex method.
       var hex = "#" + ("000000" + rgbToHex(pixelData[0], pixelData[1], pixelData[2])).slice(-6);
       cp.history.push(hex);
-      //updateSelectedColor(hex);
+      console.log("clicked on hex");
       console.log(hex);
+      updateSelectedColor(hex);
+      
       
 },false);
       
@@ -252,8 +237,10 @@
 					$swatch.click(function(){
 						// add color to the color palette history
 					  	cp.history.push($(this).css("background-color"));
-              updateGradient(cp.history[cp.history.length - 1]);
-              //updateSelectedColor(cp.history[cp.history.length - 1]);
+              updateGradient(cp.history[cp.history.length - 2], cp.history[cp.history.length - 1]);
+              console.log("clicked on palette color");
+              console.log(cp.history[cp.history.length - 1]);
+              updateSelectedColor(cp.history[cp.history.length - 1]);
 					});
 					cp.$container.append($swatch);
 				}
@@ -320,6 +307,7 @@
   <div id="bottomBox">
     <img id="palette_image" src='/static/coloring/images/palette.png' alt="color palette">
     <!-- PANPAN'S GRADIENT BOX-->
+    <canvas></canvas>
     <canvas id="gradient_box" width="400px" height="200px"></canvas>
     
   </div>
