@@ -5,6 +5,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   	<title>P3 Coloring</title>
+  
 
 	<script type="text/javascript" src="{% static 'coloring/vendors/jquery/jquery-3.3.1.min.js' %}"></script>
 	<script type="text/javascript" src="{% static 'coloring/vendors/paper/paper-full.min.js' %}"></script>
@@ -47,12 +48,106 @@
       height: 80px;
     }
     
+    #bottomBox {
+      position: fixed;
+      bottom: 0;
+      left: 0; 
+      width: 100%;
+      border-color:"black";
+      border-style: solid;
+      display: flex;
+      flex-direction: row;
+    }
+    
     
 	</style>
 
 	<script type="text/javascript" canvas="canvas">
 		window.onload = function() {
 			var canvas = document.getElementById('myCanvas');
+      
+      //PANPAN'S CODE
+      
+      //create circles
+      var c1 = document.getElementById("colorOne");
+      var c2 = document.getElementById("colorTwo");
+      var c3 = document.getElementById("colorThree");
+      var c4 = document.getElementById("colorFour");
+      var c5 = document.getElementById("colorFive");
+      
+      var usedColors = {
+				history: [], // black selected by defaul
+        $container: $('#lastFive')
+			}
+      
+      fillLastFive();
+      
+      function fillLastFive() {
+        var ctx1 = c1.getContext("2d");
+        ctx1.beginPath();
+        ctx1.arc(100, 75, 50, 0, 2 * Math.PI);
+        ctx1.stroke();
+        
+        var ctx2 = c2.getContext("2d");
+        ctx2.beginPath();
+        ctx2.arc(100, 75, 50, 0, 2 * Math.PI);
+        ctx2.stroke();
+        
+        var ctx3 = c3.getContext("2d");
+        ctx3.beginPath();
+        ctx3.arc(100, 75, 50, 0, 2 * Math.PI);
+        ctx3.stroke();
+        
+        var ctx4 = c4.getContext("2d");
+        ctx4.beginPath();
+        ctx4.arc(100, 75, 50, 0, 2 * Math.PI);
+        ctx4.stroke();
+        
+        var ctx5 = c5.getContext("2d");
+        ctx5.beginPath();
+        ctx5.arc(100, 75, 50, 0, 2 * Math.PI);
+        ctx5.stroke();
+        
+        //var lastColor =
+        
+        if (usedColors.history.length == 1) {
+          ctx1.fillStyle = usedColors.history[usedColors.history.length - 1];
+          ctx1.fill();
+        } else if (usedColors.history.length == 2) {
+          ctx2.fillStyle = usedColors.history[usedColors.history.length - 1];
+          ctx2.fill();
+        } else if (usedColors.history.length == 3) {
+          ctx3.fillStyle = usedColors.history[usedColors.history.length - 1];
+          ctx3.fill();
+        } else if (usedColors.history.length == 4) {
+          ctx4.fillStyle = usedColors.history[usedColors.history.length - 1];
+          ctx4.fill();
+        } else if (usedColors.history.length >= 5) {
+          ctx1.fillStyle = usedColors.history[usedColors.history.length - 5];
+          ctx1.fill();
+          ctx2.fillStyle = usedColors.history[usedColors.history.length - 4];
+          ctx2.fill();
+          ctx3.fillStyle = usedColors.history[usedColors.history.length - 3];
+          ctx3.fill();
+          ctx4.fillStyle = usedColors.history[usedColors.history.length - 2];
+          ctx4.fill();
+          ctx5.fillStyle = usedColors.history[usedColors.history.length - 1];
+          ctx5.fill();
+        } else {
+          ctx1.fillStyle = "white";
+          ctx1.fill();
+          ctx2.fillStyle = "white";
+          ctx2.fill();
+          ctx3.fillStyle = "white";
+          ctx3.fill();
+          ctx4.fillStyle = "white";
+          ctx4.fill();
+          ctx5.fillStyle = "white";
+          ctx5.fill();
+        }
+        
+      }
+      
       
       
       //LEONOR'S CODE
@@ -201,6 +296,19 @@
 				    var hit = mandala.item.hitTest(event.point, { tolerance: 10, fill: true });
 				    if (hit) {
 				        hit.item.fillColor = cp.history[cp.history.length - 1];
+              
+                if (usedColors.history.length < 5) {
+                  if (!usedColors.history.includes(cp.history[cp.history.length - 1])) {
+                    usedColors.history.push(cp.history[cp.history.length -1]);
+                  }
+                } else {
+                  var lastFiveColor = usedColors.history.slice(usedColors.history.length-5, usedColors.history.length);
+                  if (!lastFiveColor.includes(cp.history[cp.history.length - 1])) {
+                    usedColors.history.push(cp.history[cp.history.length -1]);
+                  }
+                }
+                
+                fillLastFive();
 				    }
 				}
 			}
@@ -298,18 +406,25 @@
   
 
 	<canvas id="myCanvas" width="750px" height="750px"></canvas>
+  
 	<div id="color-palette"></div>
  
-  
-  
+
   
   <!-- LEONOR'S CODE -->
   <div id="bottomBox">
     <img id="palette_image" src='/static/coloring/images/palette.png' alt="color palette">
-    <!-- PANPAN'S GRADIENT BOX-->
-    <canvas></canvas>
+    <!-- PANPAN'S COLOR'S BOX-->
+    <div id= "circles_Gradient">
+      <div id ="lastFive">
+        <canvas id="colorOne"></canvas>
+        <canvas id="colorTwo"></canvas>
+        <canvas id="colorThree"></canvas>
+        <canvas id="colorFour"></canvas>
+        <canvas id="colorFive"></canvas>
+      </div>
     <canvas id="gradient_box" width="400px" height="200px"></canvas>
-    
+    </div>
   </div>
   <!-- END OF LEONOR'S CODE -->
   
