@@ -11,22 +11,41 @@
 	<script type="text/javascript" src="{% static 'coloring/vendors/paper/paper-full.min.js' %}"></script>
 
 	<style type="text/css">
+       
+     #topBox {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 135px;
+      
+      display: flex;
+      flex-direction: row;
+    }
+    
+    #topItems {
+      display: flex;
+      flex-direction: row;
+      margin: 15px;
+    }
+    
 		#color-palette {
-			width: 300px;
+			width: 700px;
+      height: 165px;
 			background-color: #f1f1f1;
 			display: flex;
 			flex-wrap: wrap;
 			position: absolute;
-			top: 0;
+			bottom: 270px;
 		}
 
 		.swatch {
-			width: 24px;
-			height: 24px;
+			width: 50px;
+			height: 50px;
 			-moz-border-radius: 12px;
 			-webkit-border-radius: 12px;
 			border-radius: 12px;
-			margin: 3px;
+			margin: 10px;
 		}
 
 		#myCanvas {
@@ -41,24 +60,53 @@
     #palette_image {
       width: 120px;
       height: 120px;
+      position: absolute;
+      top: 57px;
+      left: 75px;
     }
     
     #undo {
       width: 80px;
       height: 80px;
     }
-    
+
     #bottomBox {
       position: fixed;
       bottom: 0;
       left: 0; 
       width: 100%;
-      border-color:"black";
-      border-style: solid;
+      height: 250px;
+      background-color: #f1f1f1;
       display: flex;
       flex-direction: row;
     }
     
+    #circles_Gradient{
+      position: relative;
+      top: 7px;
+      right: -300px;
+    }
+    
+    
+    .circle {
+      margin: 15px; 
+}
+    
+    #lastFive {
+      display: flex; 
+      flex-direction: row; 
+    }
+    
+    #gradient_box {
+      width: 650px;
+      height: 100px;
+    }
+    
+    #currentColor {
+      height: 100px;
+      position: absolute;
+      right: 40px;
+    }
     
 	</style>
 
@@ -85,27 +133,27 @@
       function fillLastFive() {
         var ctx1 = c1.getContext("2d");
         ctx1.beginPath();
-        ctx1.arc(100, 75, 50, 0, 2 * Math.PI);
+        ctx1.arc(50, 50, 50, 0, 2 * Math.PI);
         ctx1.stroke();
         
         var ctx2 = c2.getContext("2d");
         ctx2.beginPath();
-        ctx2.arc(100, 75, 50, 0, 2 * Math.PI);
+        ctx2.arc(50, 50, 50, 0, 2 * Math.PI);
         ctx2.stroke();
         
         var ctx3 = c3.getContext("2d");
         ctx3.beginPath();
-        ctx3.arc(100, 75, 50, 0, 2 * Math.PI);
+        ctx3.arc(50, 50, 50, 0, 2 * Math.PI);
         ctx3.stroke();
         
         var ctx4 = c4.getContext("2d");
         ctx4.beginPath();
-        ctx4.arc(100, 75, 50, 0, 2 * Math.PI);
+        ctx4.arc(50, 50, 50, 0, 2 * Math.PI);
         ctx4.stroke();
         
         var ctx5 = c5.getContext("2d");
         ctx5.beginPath();
-        ctx5.arc(100, 75, 50, 0, 2 * Math.PI);
+        ctx5.arc(50, 50, 50, 0, 2 * Math.PI);
         ctx5.stroke();
         
         //var lastColor =
@@ -159,8 +207,7 @@
       function updateSelectedColor(newColor){
         var ctx = c.getContext("2d");
         ctx.beginPath();
-        ctx.arc(100, 75, 50, 0, 2 * Math.PI);
-        console.log(newColor);
+        ctx.arc(50, 50, 50, 0, 2 * Math.PI);
         ctx.fillStyle = newColor;
         ctx.fill();
         ctx.strokeStyle = "black";
@@ -174,11 +221,11 @@
       
      //This function updates the gradient box from white to newColor  
       function updateGradient(newColor1, newColor2) {
-        var grd = ctx.createLinearGradient(0, 0, 170, 0);
+        var grd = ctx.createLinearGradient(0, 0, 600, 0);
         grd.addColorStop(0, newColor1);
         grd.addColorStop(1, newColor2);
         ctx.fillStyle = grd;
-        ctx.fillRect(20, 20, 150, 100);
+        ctx.fillRect(0, 0, 650, 150);
       }
       
     //following 4 functions from: https://ourcodeworld.com/articles/read/185/how-to-get-the-pixel-color-from-a-canvas-on-click-or-mouse-event-with-javascript   
@@ -218,8 +265,6 @@
       // Convert it to HEX if you want using the rgbToHex method.
       var hex = "#" + ("000000" + rgbToHex(pixelData[0], pixelData[1], pixelData[2])).slice(-6);
       cp.history.push(hex);
-      console.log("clicked on hex");
-      console.log(hex);
       updateSelectedColor(hex);
       
       
@@ -318,7 +363,6 @@
      var click = 0;
      $container: $('#palette_image').click( function() {
         click += 1;
-        console.log(click);
        controlPalette(click);
      });
       
@@ -346,8 +390,6 @@
 						// add color to the color palette history
 					  	cp.history.push($(this).css("background-color"));
               updateGradient(cp.history[cp.history.length - 2], cp.history[cp.history.length - 1]);
-              console.log("clicked on palette color");
-              console.log(cp.history[cp.history.length - 1]);
               updateSelectedColor(cp.history[cp.history.length - 1]);
 					});
 					cp.$container.append($swatch);
@@ -397,9 +439,12 @@
 	</script>
 </head>
 <body>	
-  <div id="topBar">
-     <!-- <img id="undo" src="'/static/coloring/images/palette.png'" alt="undo button"> -->
-     <canvas id="currentColor" width="400px" height="200px"></canvas>
+  <div id="topBox">
+    <div id="topItems">
+      <!-- Undo, redo, and eraser go here -->
+     <canvas id="currentColor" width="100px" height="100px"></canvas>
+    </div>
+     
   </div>
   
   
@@ -417,13 +462,13 @@
     <!-- PANPAN'S COLOR'S BOX-->
     <div id= "circles_Gradient">
       <div id ="lastFive">
-        <canvas id="colorOne"></canvas>
-        <canvas id="colorTwo"></canvas>
-        <canvas id="colorThree"></canvas>
-        <canvas id="colorFour"></canvas>
-        <canvas id="colorFive"></canvas>
+        <canvas  class="circle" id="colorOne" width="100px" height="100px"> </canvas>
+        <canvas  class="circle" id="colorTwo" width="100px" height="100px"></canvas>
+        <canvas  class="circle" id="colorThree" width="100px" height="100px"></canvas>
+        <canvas  class="circle" id="colorFour" width="100px" height="100px"></canvas>
+        <canvas  class="circle" id="colorFive" width="100px" height="100px"></canvas>
       </div>
-    <canvas id="gradient_box" width="400px" height="200px"></canvas>
+    <canvas id="gradient_box" width="650px" height="150px"></canvas>
     </div>
   </div>
   <!-- END OF LEONOR'S CODE -->
