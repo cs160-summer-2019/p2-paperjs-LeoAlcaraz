@@ -9,7 +9,8 @@
 
 	<script type="text/javascript" src="{% static 'coloring/vendors/jquery/jquery-3.3.1.min.js' %}"></script>
 	<script type="text/javascript" src="{% static 'coloring/vendors/paper/paper-full.min.js' %}"></script>
-
+  <script src="https://hammerjs.github.io/dist/hammer.js"></script>
+  
 	<style type="text/css">
        
      #topBox {
@@ -196,7 +197,64 @@
         
       }
       
+      //Click button for old color 
       
+      var me1 = new Hammer(c1);
+	    me1.on("tap", function(ev1) {
+       if (usedColors.history.length <  5) {
+         cp.history.push(usedColors.history[0]);
+         updateSelectedColor(usedColors.history[0]);
+       } else {
+         cp.history.push(usedColors.history[usedColors.history.length-5]);
+         updateSelectedColor(usedColors.history[usedColors.history.length-5]);
+       }
+	    });
+      
+      var me2 = new Hammer(c2);
+	    me2.on("tap", function(ev2) {
+       if (usedColors.history.length <  5) {
+         cp.history.push(usedColors.history[1]);
+         updateSelectedColor(usedColors.history[1]);
+       } else {
+         cp.history.push(usedColors.history[usedColors.history.length-4]);
+         updateSelectedColor(usedColors.history[usedColors.history.length-4]);
+       }
+	    });
+
+      var me3 = new Hammer(c3);
+	    me3.on("tap", function(ev3) {
+       if (usedColors.history.length <  5) {
+         cp.history.push(usedColors.history[2]);
+         updateSelectedColor(usedColors.history[2]);
+       } else {
+         cp.history.push(usedColors.history[usedColors.history.length-3]);
+         updateSelectedColor(usedColors.history[usedColors.history.length-3]);
+       }
+	    });
+      
+      var me4 = new Hammer(c4);
+	    me4.on("tap", function(ev4) {
+       if (usedColors.history.length <  5) {
+         cp.history.push(usedColors.history[3]);
+         updateSelectedColor(usedColors.history[3]);
+       } else {
+         cp.history.push(usedColors.history[usedColors.history.length-2]);
+         updateSelectedColor(usedColors.history[usedColors.history.length-2]);
+       }
+	    });
+      
+      var me5 = new Hammer(c5);
+	    me5.on("tap", function(ev5) {
+       if (usedColors.history.length <  5) {
+         cp.history.push(usedColors.history[4]);
+         updateSelectedColor(usedColors.history[4]);
+       } else {
+         cp.history.push(usedColors.history[usedColors.history.length-1]);
+         updateSelectedColor(usedColors.history[usedColors.history.length-1]);
+       }
+	    });
+      
+      //end of click button code
       
       //LEONOR'S CODE
       //creates circle for current color 
@@ -289,7 +347,7 @@
 
 			// color palette
 			var cp = {
-				history: ["#000000"], // black selected by default
+				history: ["red"], // black selected by default
 				options: [],
 				$container: $('#color-palette')
 			}
@@ -438,7 +496,7 @@
 		}
 	</script>
 </head>
-<body>	
+<body >	
   <div id="topBox">
     <div id="topItems">
       <!-- Undo, redo, and eraser go here -->
